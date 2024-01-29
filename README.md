@@ -1,6 +1,6 @@
 # docker-helloworld
 
-![Docker Pulls](https://img.shields.io/docker/pulls/crajapakshe429/helloworld.svg) ![Automated Builds](https://img.shields.io/docker/automated/crajapakshe429/helloworld.svg) ![Build Status](https://img.shields.io/docker/build/crajapakshe429/helloworld.svg )
+![Docker Pulls](https://img.shields.io/docker/pulls/crajapakshe429/helloworld.svg) ![Automated Builds](https://img.shields.io/docker/automated/crajapakshe429/helloworld.svg) ![Build Status](https://img.shields.io/docker/cloud/build/crajapakshe429/helloworld.svg )
 
 A simple helloworld app for docker
 
