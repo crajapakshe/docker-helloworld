@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - Adding Change logs for development tracking
 
 ### Changed
- - Updating github flow with autumated build 
+ - Updating github flow with autumated build
+ - Updating `workflow_call:`
 
 ### Fixed
