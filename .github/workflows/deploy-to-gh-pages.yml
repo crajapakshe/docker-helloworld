@@ -55,3 +55,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Deployment Summary
+        run: |
+          echo '### Deployed Hello world! container to GitHub pages by ${{ github.actor }} 🚀' >> $GITHUB_STEP_SUMMARY
+          echo '## URL: ${{ steps.deployment.output.page_url }}' >> $GITHUB_STEP_SUMMARY
