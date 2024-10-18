@@ -47,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'index.html'
+          path: '.'
       - name: Attest
         uses: actions/attest-build-provenance@v1
         with:
