@@ -1,25 +1,27 @@
-# Sample workflow for building and deploying a Hello World deployment to GitHub Pages
-# Go to Settings -> Pages -> Build and deployment -> Set the Source to "Github Actions".
-name: Build & Deploy site to GH Pages
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
-
-# Will fire when a new release is published
 on:
+  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+# Will fire when a new release is published
   # Automated Deployments
   workflow_call:
   release:
     types: [published]
-  # push:
-  #   tags: [v*]
+    # push:
+    #   tags: [v*]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
-  id-token: write
   pages: write
+  id-token: write
+  attestations: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -27,38 +29,28 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# Default to bash
-defaults:
-  run:
-    shell: bash
-
 jobs:
   validate_actor:
     uses: crajapakshe/devops-tools/.github/workflows/is_authorized_user.yml@main
-
-  build: 
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: validate_actor
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+          path: './index.html'
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
         with:
-          github_token: ${{ secrets.DEVOPS_PAT }}
-          publish_dir: ./  
-
-  deploy:
-    environment:
-      name: dev
-      url: ${{ steps.deployment.outputs.page_url }} # https://<username>.github.io/<repo>
-    runs-on: ubuntu-latest # runner
-    needs: build # only do this if the build was succesfull
-    steps:
+          subject-path: '${{ github.workspace }}/index.html'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
