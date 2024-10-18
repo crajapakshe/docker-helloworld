@@ -34,6 +34,7 @@ jobs:
     uses: crajapakshe/devops-tools/.github/workflows/is_authorized_user.yml@main
   # Single deploy job since we're just deploying
   deploy:
+    needs: validate_actor
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -46,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './index.html'
+          path: 'index.html'
       - name: Attest
         uses: actions/attest-build-provenance@v1
         with:
