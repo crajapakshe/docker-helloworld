@@ -21,8 +21,8 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
       version_script: "npm run version:changelog --"
-    secrets:
-      DEVOPS_PAT: ${{ secrets.DEVOPS_PAT }}
+    # secrets:
+    #   DEVOPS_PAT: ${{ secrets.DEVOPS_PAT }}
 
   publish:
     needs: version-bump
