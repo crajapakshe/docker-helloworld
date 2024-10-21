@@ -31,6 +31,7 @@ jobs:
       id-token: write
       pages: write
       attestations: write
+      packages: write
     uses: crajapakshe/docker-helloworld/.github/workflows/build-publish.yml@main
 
   deploy:
