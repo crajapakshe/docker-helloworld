@@ -32,11 +32,12 @@ concurrency:
 jobs:
   validate_actor:
     uses: crajapakshe/devops-tools/.github/workflows/is_authorized_user.yml@main
-  # Single deploy job since we're just deploying
-  deploy:
+  # Single deploy job to Dev
+  deploy-to-dev:
+    if: github.ref == 'refs/heads/main'
     needs: validate_actor
     environment:
-      name: github-pages
+      name: dev
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
