@@ -1,0 +1,49 @@
+name: "Version Releases"
+run-name: "Version Releases v${{ inputs.version }} by ${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to be published (#.#.#)"
+        required: true
+
+jobs:
+  validate_actor:
+    uses: crajapakshe/devops-tools/.github/workflows/is_authorized_user.yml@main
+
+  version-bump:
+    needs: validate_actor
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: crajapakshe/devops-tools/.github/workflows/version-release.yml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+      version_script: "npm run version:changelog --"
+    secrets:
+      DEVOPS_PAT: ${{ secrets.DEVOPS_PAT }}
+
+  publish:
+    needs: version-bump
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
+      attestations: write
+      packages: write
+    uses: crajapakshe/docker-helloworld/.github/workflows/build-publish.yml@main
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  deploy:
+    needs: [version-bump, publish]
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
+      attestations: write
+    uses: crajapakshe/docker-helloworld/.github/workflows/deploy-to-gh-pages.yml@main
+
+    

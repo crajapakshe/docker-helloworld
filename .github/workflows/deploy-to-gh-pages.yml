@@ -1,0 +1,116 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+# Will fire when a new release is published
+  # Automated Deployments
+  workflow_call:
+  release:
+    types: [published]
+    # push:
+    #   tags: [v*]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  attestations: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  validate_actor:
+    uses: crajapakshe/devops-tools/.github/workflows/is_authorized_user.yml@main
+
+  test_image:
+    uses: crajapakshe/docker-helloworld/.github/workflows/docker-image.yml@main
+
+  # Single deploy job to Dev
+  deploy-to-dev:
+    if: github.ref == 'refs/heads/main'
+    needs: [test_image]
+    environment:
+      name: dev
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '${{ github.workspace }}/index.html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Deployment Summary
+        run: |
+          echo '### Deployed Hello world! container to GitHub pages by ${{ github.actor }} 🚀' >> $GITHUB_STEP_SUMMARY
+          echo '## URL: ${{ steps.deployment.output.page_url }}' >> $GITHUB_STEP_SUMMARY
+
+  # Deploy to Prod
+  deploy-to-prod:
+    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: [validate_actor,test_image]
+    environment:
+      name: prod
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '${{ github.workspace }}/index.html'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Deployment Summary
+        run: |
+          echo '### Deployed Hello world! container to GitHub pages by ${{ github.actor }} 🚀' >> $GITHUB_STEP_SUMMARY
+          echo '## URL: ${{ steps.deployment.output.page_url }}' >> $GITHUB_STEP_SUMMARY
+
+  # Get final result for initiate notifications
+  final_fail:
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.deploy-to-dev.result == 'failure' || always() && needs.deploy-to-prod.result == 'failure' }}
+    needs:
+      - deploy-to-dev
+      - deploy-to-prod
+    steps:
+      - run: |
+          echo "Deployment of Docker HelloWorld service to GitHub pages :x: FAILED :x: " >> $GITHUB_STEP_SUMMARY
+
+  final_success:
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.deploy-to-dev.result == 'success' || always() && needs.deploy-to-prod.result == 'success' }}
+    needs:
+      - deploy-to-dev
+      - deploy-to-prod
+    steps:
+      - run: |
+          echo "Deployment of Docker HelloWorld service to GitHub pages :heavy_check_mark: SUCCEEDED :heavy_check_mark: " >> $GITHUB_STEP_SUMMARY
