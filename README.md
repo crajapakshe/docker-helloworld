@@ -18,9 +18,10 @@ To run this image:
 docker run -p 8080:80/tcp "crajapakshe429/docker-helloworld:latest"
 ```
 
-Dockerhub link: https://hub.docker.com/r/crajapakshe429/helloworld/
+## Links
 
-Github link: https://github.com/crajapakshe/docker-helloworld
+- **Dockerhub**: [crajapakshe429/docker-helloworld](https://hub.docker.com/r/crajapakshe429/docker-helloworld)
+- **GitHub**: [crajapakshe/docker-helloworld](https://github.com/crajapakshe/docker-helloworld)
 
 
 ## Contributions
