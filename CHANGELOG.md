@@ -8,10 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+ - Adding code owners
+ - Addidng release workflow for version bump
+ - Adding Change logs for development tracking
 
 ### Changed
+ - Updating github flow with autumated build
+ - Updating `workflow_call:`
 
 ### Fixed
+ - Fixed workflow summery page
 
 ## [v1.0.1] - 2024-10-29
 
