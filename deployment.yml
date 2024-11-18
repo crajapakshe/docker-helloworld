@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: helloworld
-        image: crajapakshe429/helloworld:latest
+        image: crajapakshe429/docker-helloworld:latest
         ports:
         - containerPort: 80
 ---
